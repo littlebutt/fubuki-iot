@@ -25,7 +25,4 @@ class Terminal:
             pool.submit(Pipeline.device_loop)
         Pipeline.after()
 
-if __name__ == '__main__':
-    Terminal.run()
-
 
