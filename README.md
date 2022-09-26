@@ -1,8 +1,11 @@
-# Fubuki Iot —— 物联网智能终端框架
+# Fubuki Iot —— 物联网智能终端
+
+
+![PyPI](https://img.shields.io/pypi/v/fubuki-iot) ![GitHub](https://img.shields.io/github/license/littlebutt/fubuki-iot) ![GitHub last commit](https://img.shields.io/github/last-commit/littlebutt/fubuki-iot) ![](https://img.shields.io/github/repo-size/littlebutt/fubuki-iot) ![](https://img.shields.io/badge/QQ-1136681910-9cf?logo=tencentqq&logoColor=9cf)
 
 ## 简介
 
-Fubuki Iot是一款开源的物联网智能终端框架，类似于市面上的天猫精灵，小爱同学等。它可以监听智能家居的消息，也可以根据用户语音向智能家居
+Fubuki Iot是一款开源的物联网智能终端，类似于市面上的天猫精灵，小爱同学等。它可以监听智能家居的消息，也可以根据用户语音向智能家居
 发送消息，从而实现家居智能化。与市面上各种终端相比，它具有以下优点：
 
 - 定制化程度更高：用户可以自己实现对家居的控制，甚至对原有的家居电器改造
@@ -247,6 +250,7 @@ class SwitchOnSemanticsModel(SemanticsModel):
 具体怎么消费这个MQTT消息，即硬件设备如何处理则需要改造硬件，具体参考 **相关资料** 。
 
 3.自定义消息推送
+
 和之前一样，也需要定义一个语义模型：
 
 ```python
@@ -295,6 +299,129 @@ class ButtonSemanticsModel(SemanticsModel):
 
 ## 进阶功能
 
+如果您对上述基本功能还不满足，可以试一下进阶功能。
+
+1.生命周期和钩子函数
+
+本智能终端在运行时分为以下几个阶段，在不同的阶段可以调用不同的钩子函数实现流程定制化：
+
+```text
+                                                             ___________________________________循环______________________________________
+                                                             |                                                                           |
+    |加载用户模型| ->  |加载上下文| -> |执行启动钩子| -> |监听用户/设备请求| -> |执行前置语义处理钩子| -> |处理请求| -> |执行后置语义处理钩子| ->|转发请求| -> |执行卸载钩子| -> |卸载|
+                                                             |                                                                           |
+                                                             |——————————————————————————————————循环——————————————————————————————————————|
+```
+
+从上图可以看出，一共有四个钩子函数，分别是 `OnStartUpHook`、 `OnModelPreprocessHook` 、 `OnModelPostprocessHook` 和 `OnTearDown`。可以通过以下方法编写钩子函数：
+
+```python
+from iot import HooksGroup
+
+@HooksGroup.on_start_up
+def start_up(context, semantics_group):
+    ...
+
+
+@HooksGroup.on_tear_down
+def tear_down(context, semantics_group):
+    ...
+
+
+@HooksGroup.on_model_preprocess
+def model_preprocess(context, function_device_model):
+    ...
+
+
+@HooksGroup.on_model_postprocess
+def model_postprocess(context, function_device_model):
+    ...
+```
+
+钩子函数可以获取到执行阶段的上下文，包括各种处理器信息和配置信息。此外，**启动钩子** 和 **卸载钩子** 可以获取语义处理模型的集合而 **前置语义处理钩子** 和 **后置语义处理钩子** 可以获取到语义模型。
+
+2.自定义设备和语音处理器
+
+本智能终端的设备（麦克风和扬声器）都是用的Windows默认的，如果要用在树莓派或者其他环境则需要自定义设备，包括麦克风（Recorder）和扬声器（Player）。
+
+首先实现对应的类：
+
+```python
+from iot import RecorderFactory, Recorder
+
+@RecorderFactory.set
+class MyRecorder(Recorder):      # 继承Recorder类，并加上注解
+    
+    def awake(self) -> bool:          # 实现awake方法，这个方法必须是个阻塞的方法，返回True则开始录音，返回False则推出程序
+        ...
+
+    def record(self, time: int) -> str: # 录音，time为录音时长，返回录音后保存的路径
+        ...
+```
+
+然后在 `.env` 文件中修改默认的麦克风设备:
+
+```text
+DEVICE_REC=MyRecorder
+```
+
+同样，扬声器也是这样的步骤：
+
+```python
+from iot import PlayerFactory, Player
+
+@PlayerFactory.set
+class MyPlayer(Player):
+
+    def play(self, path: str) -> None:    # path为存储语音文本的txt文件路径
+        ...
+```
+
+然后更改 `.env` 文件
+
+```text
+DEVICE_PLY=MyPlayer
+```
+
+您也可以修改默认的语音处理器，包括语音识别（AsrProcessor）和语音合成（TtsProcessor），方法也是一样的。
+
+```python
+from iot import AsrProcessorFactory, AsrProcessor
+from typing import Optional
+
+
+@AsrProcessorFactory.set
+class MyAsrProcessor(AsrProcessor):
+
+    def asr(self, path: str) -> Optional[str]: # path为音频文件（一般为wav）的路径，返回语音文字，如果为None则说明处理失败
+        ...
+```
+
+`.env` 文件
+
+```text
+ASR_PROCESSOR=MyAsrProcessor
+```
+
+语音合成可以这样修改：
+
+```python
+from iot import TtsProcessorFactory, TtsProcessor
+
+
+@TtsProcessorFactory.set
+class MyTtsProcessor(TtsProcessor):
+
+    def tts(self, text: str) -> str:  # text为需要被合成的文字，返回合成后的音频文件路径
+        ...
+```
+
+`.env` 文件
+
+```text
+TTS_PROCESSOR=MyTtsProcessor
+```
+
 
 ## 相关资料
 
@@ -310,3 +437,5 @@ class ButtonSemanticsModel(SemanticsModel):
 2.音频等流媒体的播放
 
 3.语音唤醒
+
+4. 语义模型的order
