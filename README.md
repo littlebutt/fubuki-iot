@@ -18,9 +18,11 @@ Fubuki Iot是一款开源的物联网智能终端，类似于市面上的天猫�
 
 ### 安装
 
-#### 方案一：通过`pip`安装
+#### 方案一：通过`pip`安装（推荐）
 
-（待完善）
+```shell script
+pip install fubuki-iot
+```
 
 #### 方案二：下载安装
 
@@ -301,7 +303,21 @@ class ButtonSemanticsModel(SemanticsModel):
 
 如果您对上述基本功能还不满足，可以试一下进阶功能。
 
-1.生命周期和钩子函数
+1.语音唤醒功能
+
+像主流的智能终端一样，本项目也可已开启语音唤醒功能。该功能是通过内置的 [Pocketsphinx](https://github.com/bambocher/pocketsphinx-python) 
+实现的，因此需要安装其依赖，包括swig，C语言环境等，具体可以查看相关文档。
+
+成功安装好依赖后将 `.env` 文件添加以下两行：
+
+```text
+TERMINAL_MODE=0
+DEVICE_REC=PocketsphinxRecorder
+```
+
+再次启动程序可以通过对它说hello或者hi唤醒。
+
+2.生命周期和钩子函数
 
 本智能终端在运行时分为以下几个阶段，在不同的阶段可以调用不同的钩子函数实现流程定制化：
 
@@ -340,7 +356,7 @@ def model_postprocess(context, function_device_model):
 
 钩子函数可以获取到执行阶段的上下文，包括各种处理器信息和配置信息。此外，**启动钩子** 和 **卸载钩子** 可以获取语义处理模型的集合而 **前置语义处理钩子** 和 **后置语义处理钩子** 可以获取到语义模型。
 
-2.自定义设备和语音处理器
+3.自定义设备和语音处理器
 
 本智能终端的设备（麦克风和扬声器）都是用的Windows默认的，如果要用在树莓派或者其他环境则需要自定义设备，包括麦克风（Recorder）和扬声器（Player）。
 
@@ -436,6 +452,4 @@ TTS_PROCESSOR=MyTtsProcessor
 
 2.音频等流媒体的播放
 
-3.语音唤醒
-
-4. 语义模型的order
+3.语义模型的order

@@ -7,7 +7,7 @@ with open("README.md", "r", encoding='UTF-8') as f:
 
 setup(
     name='fubuki-iot',
-    version='0.1',
+    version='0.2',
     python_requires=">=3.8",
     packages=['iot', 'iot.core', 'iot.core.hardware', 'iot.core.acoustics', 'iot.core.semantics', 'iot.integration'],
     install_requires=['keyboard>=0.13.5', 'loguru>=0.6.0', 'paho-mqtt>=1.6.1', 'PyAudio>=0.2.12', 'pydantic>=1.10.2',
@@ -17,6 +17,6 @@ setup(
     long_description_content_type="text/markdown",
     license='MIT License',
     author='littlebutt',
-    author_email='luogan199686@gmail.com',
+    author_email='luogan1996@icloud.com',
     description='An accessable Iot Terminal implementated by Python'
 )
