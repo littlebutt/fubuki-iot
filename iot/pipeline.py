@@ -30,6 +30,8 @@ class Pipeline:
             if Context.recorder.awake():
                 with Context.uni_lock:
                     logger.info("智能终端被唤醒")
+                    path = Context.tts_processor.tts("我在，你说")
+                    Context.player.play(path)
                     time = int(Context.config['RECORDER_TIME']) if 'RECORDER_TIME' in Context.config else 3
                     path = Context.recorder.record(time)
                     logger.info("已完成录音，路径：" + path)

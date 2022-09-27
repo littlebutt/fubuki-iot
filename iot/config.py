@@ -21,6 +21,8 @@ class Config(UserDict):
             self['MQTT_HOST'] = '127.0.0.1'
         if 'MQTT_PORT' not in self.data:
             self['MQTT_PORT'] = '1883'
+        if 'TERMINAL_MODE' not in self.data: # 终端模式：0-监听用户 1-监听设备 2-两者都监听
+            self['TERMINAL_MODE'] = '2'
 
     def __getitem__(self, item):
         if not self.data:
