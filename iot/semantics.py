@@ -48,7 +48,7 @@ class SemanticsGroup:
                     try:
                         logger.info(f"{model.func} called，args：" + " ".join(args))
                         called = model.func(*args)
-                        called.topic = topic
+                        called.topic = topic if topic is not None else called.topic
                         logger.success(f"{model.func}called with success：" + called.__str__())
                     except Exception as e:
                         logger.error(f"{model.func}called in ERROR：{e}")

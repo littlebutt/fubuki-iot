@@ -19,7 +19,7 @@ class Pipeline:
             Context.config = config
         logger.info("开始加载智能终端上下文")
         Context.load_context()
-        logger.info("上下文加载完成 " + Context.__dict__.__str__())
+        logger.info("上下文加载完成 " + Context.__str__())
         HooksGroup.execute_start_up(context=Context, semantics_group=SemanticsGroup)
 
     @staticmethod

@@ -189,7 +189,7 @@ class SemanticsModel(BaseModel):
     frm: SemanticsFromEnum
 
     # topic，用来检索匹配
-    topic: str
+    topic: Optional[str]
 
     # 正则表达式，用来检索匹配
     regex: Optional[str]

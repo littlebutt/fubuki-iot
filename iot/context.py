@@ -51,3 +51,15 @@ class Context:
     @classmethod
     def __build_context(cls):
         mkdir(cls.config['RESOURCE_PATH'], ['wav', 'txt'])
+
+    @classmethod
+    def __str__(cls):
+        return f'''{{
+            config: {cls.config},
+            recorder: {cls.recorder.__class__.__name__},
+            player: {cls.player.__class__.__name__},
+            asr_processor: {cls.asr_processor.__class__.__name__},
+            tts_processor: {cls.tts_processor.__class__.__name__},
+            messages_processor: {cls.messages_processor.__class__.__name__}
+        }}
+        '''
