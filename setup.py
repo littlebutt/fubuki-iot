@@ -7,7 +7,7 @@ with open("README.md", "r", encoding='UTF-8') as f:
 
 setup(
     name='fubuki-iot',
-    version='0.2',
+    version='0.3',
     python_requires=">=3.8",
     packages=['iot', 'iot.core', 'iot.core.hardware', 'iot.core.acoustics', 'iot.core.semantics', 'iot.integration'],
     install_requires=['keyboard>=0.13.5', 'loguru>=0.6.0', 'paho-mqtt>=1.6.1', 'PyAudio>=0.2.12', 'pydantic>=1.10.2',
